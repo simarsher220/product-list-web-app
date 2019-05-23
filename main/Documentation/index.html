@@ -1,0 +1,352 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<head lang="en">
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>Angustore</title>
+	<!-- Framework CSS -->
+	<link rel="stylesheet" href="assets/blueprint-css/screen.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="assets/blueprint-css/print.css" type="text/css" media="print">
+	<!--[if lt IE 8]><link rel="stylesheet" href="assets/blueprint-css/ie.css" type="text/css" media="screen, projection"><![endif]-->
+	<link rel="stylesheet" href="assets/blueprint-css/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
+	<style type="text/css" media="screen">
+		p, table, hr, .box { margin-bottom:25px; }
+		.box p { margin-bottom:10px; }
+		.style_s span{color:#18b74c}
+	</style>
+</head>
+
+
+<body>
+	<div class="container">
+	
+		<h3 class="center alt">&ldquo;Angustore&rdquo; Documentation by &ldquo;Alessio Corsini&rdquo; v1.0</h3>
+		
+		<hr>
+		
+		<h1 class="center">&ldquo;Angustore&rdquo;</h1>
+		
+		<div class="borderTop">
+			<div class="span-6 colborder info prepend-1">
+				<p class="prepend-top">
+					<strong>
+					Created: 14/04/2014<br>
+					By: Alessio<br>
+					</strong>
+				</p>
+			</div><!-- end div .span-6 -->		
+	
+			<div class="span-12 last">
+				<p class="prepend-top append-0">
+                Thank you for purchasing my theme. If you have any questions that are beyond the scope of this help file, please feel free to email via my user page contact form <a href="http://themeforest.net/user/corsaro">here</a>. Thanks so much!</p>
+			</div>
+		</div><!-- end div .borderTop -->
+		
+		<hr>
+		
+		<h2 id="toc" class="alt">Table of Contents</h2>
+		<ol class="alpha">
+			<li><a href="#htmlStructure">HTML Structure</a></li>
+			<li><a href="#cssFiles">CSS Files and Structure</a></li>
+			<li><a href="#javascript">JavaScript</a></li>
+			<li><a href="#psdFiles">Files included</a></li>
+	        <li><a href="#emailOrder">Email Order</a></li>
+		</ol>
+		
+		<hr>
+		
+		<h3 id="htmlStructure"><strong>A) HTML Structure</strong> - <a href="#toc">top</a></h3>
+		<p>This is master page where inglobe the other page (store, product, shoppingCart) in ng-view</p>
+		<p>If you see up-top where is tag html is ng-app = Angustore this is a module to describe down for integrate the page</p>
+		<img src="assets/images/htmlstructure.png" alt="HTML Structure" />
+		<br /><br />
+        
+        <p>The store.htm partial view is implemented as follows:</p>
+        <img src="assets/images/slider.png" alt="HTML Structure" />
+        <p>getTotalCount and getTotalPrice methods to retrieve the cart information</p>
+        <p>product in pagedItems[currentPage] it s part take the date from products but befour pagination</p>
+		<hr>
+
+		<h3 id="cssFiles"><strong>B) CSS Files and Structure</strong> - <a href="#toc">top</a></h3>
+
+        <p>Easy structure style_cube.css</p>
+        <pre>	
+        /*STRUCTURE CSS*/
+        /* 01 - GENERAL CONTENT + PAGE STORE DESIGN*/
+        /* 02 - PAGE CART DESIGN */
+        /* 03 - PAGE PRODUCT DESIGN */
+        /* 04 - FOOTER */
+        /* 05 - MEDIA QUERIES */
+	
+        </pre>
+		<hr>
+		
+		<h3 id="javascript"><strong>C) JavaScript</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Structure js files.</p>
+		  
+		<ol>
+			<li>The sample application starts with the definition of an AngularJS module that represents the application. 
+            This first block of code defines the storeApp object that represents the application. 
+            It contains a routeProvider that specifies which view should be displayed based on the URL.
+            For example, when the URL ends with “/cart”, the app should display the view defined in the “partials/shoppingCart.htm” file. 
+            The view should be bound to a controller of type “storeController”.
+            The module Angustore module is defined in the app.js file as follows:</li>
+			<li>
+    <pre>	
+	    var storeApp = angular.module('Angustore', []).
+          config(['$routeProvider', function($routeProvider) {
+          $routeProvider.
+              when('/store', {
+                templateUrl: 'partials/store.htm',
+                controller: storeController 
+              }).
+              when('/products/:productCode', {
+                templateUrl: 'partials/product.htm',
+                controller: storeController
+              }).
+              when('/cart', {
+                templateUrl: 'partials/shoppingCart.htm',
+                controller: storeController
+            }).
+              otherwise({
+                redirectTo: '/store'
+            });
+
+        }]);
+
+    </pre>
+
+    <p>Here is the definition of the “DataService” that provides data shared by all views in the Angular Store application:</p>
+    <p>The service creates a “store” object that contains a list of the products available and a “shoppingCart” object that represents the shopping cart.
+    When the “shoppingCart” object is created, it automatically loads its contents from local storage, so users can add items to the cart, close the application, 
+    and continue shopping later on.</p>
+    <p>The “PayPal” option specifies the merchant account to use for checking out, and has no additional options. 
+       To use the shopping cart with PayPal, you have to create a merchant account with PayPal. You can do that here: https://www.paypal.com/webapps/mpp/merchant</p>
+    <pre>
+
+    storeApp.factory("DataService", function () {
+
+            // create store
+            var myStore = new store();
+            var storeDetails = new detailsprod();
+            // create shopping cart
+            var myCart = new shoppingCart("AngularStore");
+            myCart.addCheckoutParameters("PayPal", "your PayPal merchant account id");
+        
+            // return data object with store and cart
+            return {
+                store: myStore,
+                cart: myCart,
+                detailsprod: storeDetails
+            };
+        });
+
+    </pre>
+    <p>Once the data service has been created, it can be used by the “storeController” objects that will drive all the views in the application. This is done in the controller.js</p>
+    <pre>
+ 
+	    function storeController($scope, $routeParams, DataService) {
+
+        // get store and cart from service
+        $scope.detailsprod = DataService.detailsprod;
+        $scope.store = DataService.store;
+        $scope.cart = DataService.cart;
+
+        if ($routeParams.productCode != null) {
+            $scope.product = $scope.store.getProduct($routeParams.productCode);
+            $scope.detail = $scope.detailsprod.getDetail($routeParams.productCode);
+        }
+    }
+
+			
+    </pre>
+    <br />
+    <p>The store with list product defined inside the store.js</p>
+    <p>The class category use for personal filter</p>
+    <pre style="overflow: auto; word-break: normal !important;word-wrap: normal !important;white-space: pre !important;">
+         function store() {
+            this.products = [
+                  { num: 1, code: 'APL', category: 'mac', name: '55" Apple LCD TV', src: "apple1.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 2150, cal: 10 },
+                  { num: 2, code: 'AVC', category: 'ipad', name: 'Apple iPad', src: "apple2.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1100, cal: 10 },
+                  { num: 3, code: 'BAN', category: 'phone', name: 'MacBookPro', src: "apple6.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 645, cal: 10 },
+                  { num: 4, code: 'CTP', category: 'mac', name: 'MacBookPro', src: "apple4.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1300, cal: 10 },
+                  { num: 5, code: 'FIG', category: 'ipad', name: 'MacBook Airs', src: "apple5.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 750, cal: 10 },
+                  { num: 6, code: 'GRP', category: 'ipad', name: 'Front Office Manager', src: "apple7.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1000, cal: 10 },
+                  { num: 7, code: 'GUA', category: 'mac', name: 'Interaction Designer', src: "apple3.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 500, cal: 10 },
+                  { num: 8, code: 'KIW', category: 'mac', name: 'Marketing Manager', src: "apple4.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1670, cal: 10 },
+                  { num: 9, code: 'ORG', category: 'ipad', name: 'Account Manager', src: "apple2.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 2000, cal: 10 },
+                  { num: 10, code: 'LSS', category: 'mac', name: '35" Apple LCD TV', src: "apple10.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 2150, cal: 10 },
+                  { num: 11, code: 'LAA', category: 'phone', name: 'Apple xiPad', src: "apple11.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1100, cal: 10 },
+                  { num: 12, code: 'LBB', category: 'mac', name: 'MacBookxxPro', src: "apple12.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 645, cal: 10 },
+                  { num: 13, code: 'LCC', category: 'sound', name: 'MacBookPro', src: "apple13.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1300, cal: 10 },
+                  { num: 14, code: 'LDD', category: 'mac', name: 'MacBook Irs', src: "apple14.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 750, cal: 10 },
+                  { num: 15, code: 'LEE', category: 'sound', name: 'Front Office Manager', src: "apple15.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1000, cal: 10 },
+                  { num: 16, code: 'LFF', category: 'sound', name: 'Interaction Designer', src: "apple13.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 500, cal: 10 },
+                  { num: 17, code: 'LGG', category: 'sound', name: 'Marketing Manager', src: "apple13.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1670, cal: 10 },
+                  { num: 18, code: 'LHH', category: 'sound', name: 'Account Manager', src: "apple13.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 2000, cal: 10}];
+     
+        }
+    </pre>
+    <br />
+    <p>This is the details class to mach with the (id.detail, code.product) product</p>
+    <pre style="overflow: auto; word-break: normal !important;word-wrap: normal !important;white-space: pre !important;">
+         function store() {
+            this.products = [
+                  { num: 1, code: 'APL', category: 'mac', name: '55" Apple LCD TV', src: "apple1.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 2150, cal: 10 },
+                  { num: 2, code: 'AVC', category: 'ipad', name: 'Apple iPad', src: "apple2.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1100, cal: 10 },
+                  { num: 3, code: 'BAN', category: 'phone', name: 'MacBookPro', src: "apple6.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 645, cal: 10 },
+                  { num: 4, code: 'CTP', category: 'mac', name: 'MacBookPro', src: "apple4.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1300, cal: 10 },
+                  { num: 5, code: 'FIG', category: 'ipad', name: 'MacBook Airs', src: "apple5.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 750, cal: 10 },
+                  { num: 6, code: 'GRP', category: 'ipad', name: 'Front Office Manager', src: "apple7.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1000, cal: 10 },
+                  { num: 7, code: 'GUA', category: 'mac', name: 'Interaction Designer', src: "apple3.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 500, cal: 10 },
+                  { num: 8, code: 'KIW', category: 'mac', name: 'Marketing Manager', src: "apple4.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1670, cal: 10 },
+                  { num: 9, code: 'ORG', category: 'ipad', name: 'Account Manager', src: "apple2.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 2000, cal: 10 },
+                  { num: 10, code: 'LSS', category: 'mac', name: '35" Apple LCD TV', src: "apple10.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 2150, cal: 10 },
+                  { num: 11, code: 'LAA', category: 'phone', name: 'Apple xiPad', src: "apple11.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1100, cal: 10 },
+                  { num: 12, code: 'LBB', category: 'mac', name: 'MacBookxxPro', src: "apple12.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 645, cal: 10 },
+                  { num: 13, code: 'LCC', category: 'sound', name: 'MacBookPro', src: "apple13.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1300, cal: 10 },
+                  { num: 14, code: 'LDD', category: 'mac', name: 'MacBook Irs', src: "apple14.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 750, cal: 10 },
+                  { num: 15, code: 'LEE', category: 'sound', name: 'Front Office Manager', src: "apple15.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1000, cal: 10 },
+                  { num: 16, code: 'LFF', category: 'sound', name: 'Interaction Designer', src: "apple13.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 500, cal: 10 },
+                  { num: 17, code: 'LGG', category: 'sound', name: 'Marketing Manager', src: "apple13.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 1670, cal: 10 },
+                  { num: 18, code: 'LHH', category: 'sound', name: 'Account Manager', src: "apple13.png", description: 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. ', price: 2000, cal: 10}];
+     
+        }
+    </pre>
+    <br />
+    <h3>Currency</h3>
+    <p>Question: How can i change the currency? </p>
+
+    <pre>
+        the curremcy for change need to inser the simbol
+
+            {{product.price | currency}}
+
+        add this
+
+            {{product.price | currency : “€”}}
+
+        and inside the cart.js
+         
+            need to add also this data[“currency_code”] = “EUR”; inside the cart js in this function checkoutPayPal
+    </pre>
+    <br />
+    <h3>Switch from grid to list view.</h3>
+    <p>Question: How can i set to get a list view as default on start?</p>
+
+    <p>Reply: for the view need to change this inside the store.html in this so change the position the true anfd false</p>
+    <pre>
+        id=”cbp-vm” class=”cbp-vm-switcher” ng-class=”{true: ’’, false: ‘activegrid’}[isActive]”
+
+            in
+
+        id=”cbp-vm” class=”cbp-vm-switcher” ng-class=”{false: ’’, true: ‘activegrid’}[isActive]”
+    </pre>
+    <br />
+    <p>Filter Search</p>
+    <pre>
+    $scope.search = function (name) {
+        $scope.filteredItems = $filter('filter')(myStore.products, function (product) {
+            for (var attr in product) {
+                if (searchMatch(product[name], $scope.query))
+                    return true;
+            }
+            return false;
+        });
+        $scope.currentPage = 0;
+        $scope.groupToPages();
+    };
+    </pre>
+    <p><span style="font-weight:bold">ShoppingCart(cartName):</span>
+        This is the constructor.
+        The cartName parameter identifies the cart when saving it to or loading it from local storage.  Before you can actually use the 
+        cart for checkout operations, you must initialize it by adding one or more payment providers. This is done with the addCheckoutParameters method.</p>
+        <p><span style="font-weight:bold">addItem(code, name, price, quantity):</span>
+        This method adds or removes items from the cart.
+        If the cart already contains items with the given code, then the quantity of that item is modified. If the quantity reaches zero, the item is automatically removed from the cart.
+        If the cart does not contain items with the given code, then a new item is created and added to the cart using the specified code, name, price, and quantity.
+        After the cart has been updated, it is automatically saved to local storage.</p>
+        <p><span style="font-weight:bold">clearItems():</span>
+        This method clears the cart by removing all items. It also saves the empty cart to local storage.</p>
+        <p><span style="font-weight:bold">getTotalCount(code):</span>
+        This method gets the quantity of items or a given type or for all items in the cart.</p>
+        <p><span style="font-weight:bold">getTotalPrice(code):</span>
+        This method gets the total price (unit price * quantity) for one or all items in the cart.</p>
+		</li>
+
+		</ol>
+		
+		<hr>
+		
+		<h3 id="psdFiles"><strong>ADD NEW PAGES</strong> - <a href="#toc">top</a></h3>
+		<p>Using the .config() method, we request the $routeProvider to be injected into our config function and use the $routeProvider.when() method to define our routes.</p>
+
+		<p>Our application routes are defined as follows:</p>
+        <ul>
+            <li>Create you partial page html( remember the page it s only partial so with out the layout html body etc...)</li>
+            <li>Insert inside the App.js the url template partial page</li>
+            <li>Insert in page store.htm the link index.html#/about when you click go in page about</li>
+        </ul>
+        <br />
+        <pre>
+
+        var storeApp = angular.module('Angustore', []).
+          config(['$routeProvider', function($routeProvider) {
+          $routeProvider.
+              when('/store', {
+                templateUrl: 'partials/store.htm',
+                controller: storeController 
+              }).
+              when('/about', {
+                  templateUrl: 'partials/about.htm',
+                  controller: storeController
+              }).
+              when('/products/:productCode', {
+                templateUrl: 'partials/product.htm',
+                controller: storeController
+              }).
+              when('/cart', {
+                templateUrl: 'partials/shoppingCart.htm',
+                controller: storeController
+            }).
+              otherwise({
+                redirectTo: '/store'
+            });
+
+        }]);
+        
+        </pre>
+        <br /><br />
+        <ul>
+        <li>when('/store'): The store list view will be shown when the URL hash fragment is /store. To construct this view, 
+            Angular will use the store.html template and the storeController.</li>
+            <li>when('/products/:productCode'): The products details view will be shown when the URL hash fragment matches '/products/:productCode', where :productCode is a variable part of the URL. 
+            To construct the phone details view, Angular will use the product.html template and the storeController.</li>
+        </ul>
+		<br />
+        <br />
+
+        <hr>
+		
+		<h3 id="emailOrder"><strong>Form Email Order Products</strong> - <a href="#toc">top</a></h3>
+		<p>The data from the email form arrive in your email with the data you see in this image:</p>
+        <br />
+        <img src="assets/images/email.jpg" alt="HTML Structure" />
+
+        <br />
+
+        <p>The submit form use this controller postController inside app.js and call the file clone.php where compose the email to send.</p>
+
+        <p>MORE INFO:</p>
+        <a href="https://docs.angularjs.org/tutorial/step_07">Tutorial AndularJs</a>
+        <br /><br />
+		<hr>
+		
+		<p>Once again, thank you so much for purchasing this theme. As I said at the beginning, I'd be glad to help you if you have any questions relating to this theme. No guarantees, but I'll do my best to assist. If you have a more general question relating to the themes on ThemeForest, you might consider visiting the forums and asking your question in the "Item Discussion" section.</p> 
+		
+		<p class="append-bottom alt large"><strong>Corsaro</strong></p>
+		<p><a href="#toc">Go To Table of Contents</a></p>
+		
+		<hr class="space">
+	</div><!-- end div .container -->
+</body>
+</html>
