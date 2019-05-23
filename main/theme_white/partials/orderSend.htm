@@ -33,7 +33,7 @@
                         <!-- COUNTRY -->
                     <div class="form-group" ng-class="{'form-group':true}"> 
                             <div class="col-lg-12">
-                                <select ng-model="formData.country" class="select-opt form-control-select">
+                                <select ng-model="formData.country" class="select-opt form-control-select" id="inputCountry">
                                     <option class="frt-options" value=""> - Select a Country -</option>
                                     <option ng-repeat="country in countries" class="other-opt" value="{{country.name}}">{{country.name}}</option>
                                 </select>

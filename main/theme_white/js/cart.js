@@ -29,8 +29,8 @@ shoppingCart.prototype.loadItems = function () {
             var items = JSON.parse(items);
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                if (item.code != null && item.name != null && item.price != null && item.quantity != null) {
-                    item = new cartItem(item.code, item.name, item.src, item.price, item.quantity);
+                if (item.id != null && item.code != null && item.name != null && item.price != null && item.quantity != null) {
+                    item = new cartItem(item.id, item.code, item.name, item.src, item.price, item.quantity);
                     this.items.push(item);
                 }
             }
@@ -49,7 +49,7 @@ shoppingCart.prototype.saveItems = function () {
 }
 
 // adds an item to the cart
-shoppingCart.prototype.addItem = function (code, name, src, price, quantity) {
+shoppingCart.prototype.addItem = function (id, code, name, src, price, quantity) {
     quantity = this.toNumber(quantity);
     if (quantity != 0) {
 
@@ -57,7 +57,7 @@ shoppingCart.prototype.addItem = function (code, name, src, price, quantity) {
         var found = false;
         for (var i = 0; i < this.items.length && !found; i++) {
             var item = this.items[i];
-            if (item.code == code) {
+            if (item.id == id) {
                 found = true;
                 item.quantity = this.toNumber(item.quantity + quantity);
                 if (item.quantity <= 0) {
@@ -68,7 +68,7 @@ shoppingCart.prototype.addItem = function (code, name, src, price, quantity) {
 
         // new item, add now
         if (!found) {
-            var item = new cartItem(code, name, src, price, quantity);
+            var item = new cartItem(id, code, name, src, price, quantity);
             this.items.push(item);
         }
 
@@ -165,6 +165,7 @@ shoppingCart.prototype.checkoutPayPal = function (parms, clearCart) {
     for (var i = 0; i < this.items.length; i++) {
         var item = this.items[i];
         var ctr = i + 1;
+        data["item_id_" + ctr] = item.id;
         data["item_number_" + ctr] = item.code;
         data["item_name_" + ctr] = item.name;
         data["quantity_" + ctr] = item.quantity;
@@ -219,7 +220,8 @@ function checkoutParameters(serviceName, merchantID, options) {
 //----------------------------------------------------------------
 // items in the cart
 //
-function cartItem(code, name, src, price, quantity) {
+function cartItem(id, code, name, src, price, quantity) {
+    this.id = id;
     this.code = code;
     this.name = name;
     this.src = src;

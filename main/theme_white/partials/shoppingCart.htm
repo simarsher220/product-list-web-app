@@ -31,28 +31,31 @@
                 </tr>
 
                 <!-- cart items -->
-                <tr ng-repeat="item in cart.items | orderBy:'name'">
+                <tr ng-repeat="item in cart.items | orderBy:'name'" id="{{item.id}}">
                     <td><img ng-src="images/{{item.src}}" alt="" /> {{item.name}}</td>
                     <td class="tdCenter">
                       <div class="input-append">
                         <!-- use type=tel instead of  to prevent spinners -->
                         <input
-                            class="col-md-2 text-center quantity-prod" type="tel" 
+                            class="col-md-2 text-center quantity-prod" type="tel"
+                            id="{{item.id}}_quantity" 
                             ng-model="item.quantity" 
                             ng-change="cart.saveItems()" />
                         <button 
                             class="btn btn-success" type="button" 
                             ng-disabled="item.quantity >= 1000"
-                            ng-click="cart.addItem(item.code, item.name, item.src, item.price, +1)">+</button>
+                            id="{{item.id}}_add"
+                            ng-click="cart.addItem(item.id, item.code, item.name, item.src, item.price, +1)">+</button>
                         <button 
                             class="btn btn-inverse" type="button" 
                             ng-disabled="item.quantity <= 1"
-                            ng-click="cart.addItem(item.code, item.name, item.src, item.price, -1)">-</button>
+                            id="{{item.id}}_remove"
+                            ng-click="cart.addItem(item.id, item.code, item.name, item.src, item.price, -1)">-</button>
                       </div>
                     </td>
-                    <td class="tdRight">{{item.price * item.quantity | currency}}</td>
+                    <td class="tdRight" id="{{item.id}}_price">{{item.price * item.quantity | currency}}</td>
                     <td class="tdCenter" title="remove from cart">
-                        <a href="" ng-click="cart.addItem(item.code, item.name, item.src, item.price, -10000000)" >
+                        <a href="" ng-click="cart.addItem(item.id, item.code, item.name, item.src, item.price, -10000000)" >
                             <i class="fa fa-times"></i>
                         </a>
                     </td>
@@ -62,7 +65,7 @@
                 <tr class="well">
                     <td><b>Total</b></td>
                     <td class="tdCenter"><b>{{cart.getTotalCount()}}</b></td>
-                    <td class="tdRight"><b>{{cart.getTotalPrice() | currency}}</b></td>
+                    <td class="tdRight" id="totalPrice"><b>{{cart.getTotalPrice() | currency}}</b></td>
                     <td />
                 </tr>
             </table>
@@ -95,7 +98,7 @@
             </p>
 
             <p class="text-info">
-                <a href="#/orderSend" title="go to shopping cart" class="btn btn-block btn-primary" ng-disabled="cart.getTotalCount() < 1">
+                <a href="#/orderSend" id="cartCheckoutButton" title="go to shopping cart" class="btn btn-block btn-primary" ng-disabled="cart.getTotalCount() < 1">
                     <i class="icon-ok icon-white" /> order by mail pay by delivery
                 </a>
                 
